@@ -57,8 +57,8 @@ public class ContactSettingsActivity extends AppCompatActivity {
 //
     private void initSettings() {
         String sortBy = getSharedPreferences("MyContactListPreferences",
-                Context.MODE_PRIVATE).getString("sort-field", "contactname");
-        String sortOrder = getSharedPreferences("MycontactListPreferences",
+                Context.MODE_PRIVATE).getString("sortfield", "contactname");
+        String sortOrder = getSharedPreferences("MyContactListPreferences",
                 Context.MODE_PRIVATE).getString("sortorder", "ASC");
 
         RadioButton rbName = findViewById(R.id.radioName);
