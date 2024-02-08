@@ -1,5 +1,6 @@
 package com.example.mycontactlist;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +14,49 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
+
+public class ContactAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Contact> contactData;
     private View.OnClickListener mOnItemClickListener;
     private boolean isDeleting;
     private Context parentContext;
+
+    public class ContactViewHolder extends RecyclerView.ViewHolder {
+        public TextView textViewContact;
+        public TextView textPhone;
+        public Button deleteButton;
+
+        public TextView emailAddress;
+
+        public ContactViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textViewContact = itemView.findViewById(R.id.textContactName);
+            textPhone = itemView.findViewById(R.id.textPhoneNumber);
+            deleteButton = itemView.findViewById(R.id.buttonDeleteContact);
+            emailAddress = itemView.findViewById(R.id.textEmailAddress);
+            itemView.setTag(this);
+            itemView.setOnClickListener(mOnItemClickListener);
+        }
+
+        public TextView getEmailAddreess() {
+            return emailAddress;
+        }
+        public TextView getContactTextView() {
+            return textViewContact;
+        }
+
+        public TextView getPhoneTextView() {
+            return textPhone;
+        }
+
+        public TextView getDeleteButton() {
+            return deleteButton;
+        }
+
+
+    }
+
 
     public ContactAdapter(ArrayList<Contact> arrayList, Context context) {
         this.contactData = arrayList;
@@ -29,49 +67,37 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         mOnItemClickListener = itemClickListener;
     }
 
+
     public void setDelete(boolean b) {
         isDeleting = b;
     }
 
     @NonNull
     @Override
-    public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_item_view, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
         return new ContactViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        Contact contact = contactData.get(position);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        ContactViewHolder cvh = (ContactViewHolder) holder;
+        cvh.getContactTextView().setText(contactData.get(position).getContactName());
+        cvh.getPhoneTextView().setText(contactData.get(position).getPhoneNumber());
+        cvh.getEmailAddreess().setText(contactData.get(position).geteMail());
 
-        // Ensure views are not null before accessing them
-        if (holder.textViewContact != null) {
-            holder.textViewContact.setText(contact.getContactName());
-        }
-
-        if (holder.textPhone != null) {
-            holder.textPhone.setText(contact.getPhoneNumber());
-        }
-
-        // Ensure deleteButton is not null before accessing it
-        if (holder.getDeleteButton() != null) {
-            if (isDeleting) {
-                holder.getDeleteButton().setVisibility(View.VISIBLE);
-                holder.getDeleteButton().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int position = holder.getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION) {
-                            deleteItem(position);
-                        }
-                    }
-                });
-            } else {
-                holder.getDeleteButton().setVisibility(View.INVISIBLE);
-            }
+        if (isDeleting) {
+            cvh.getDeleteButton().setVisibility(View.VISIBLE);
+            cvh.getDeleteButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteItem(position);
+                }
+            });
+        } else {
+            cvh.getDeleteButton().setVisibility(View.INVISIBLE);
         }
     }
-
     private void deleteItem(int position) {
         Contact contactToDelete = contactData.get(position);
         ContactDataSource ds = new ContactDataSource(parentContext);
@@ -99,33 +125,5 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
     public Contact getItem(int position) {
         return contactData.get(position);
-    }
-
-
-    public class ContactViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView textViewContact;
-        public TextView textPhone;
-        public Button deleteButton;
-
-        public ContactViewHolder(@NonNull View itemView) {
-            super(itemView);
-            textViewContact = itemView.findViewById(R.id.textViewName);
-            textPhone = itemView.findViewById(R.id.textPhoneNumber);
-            deleteButton = itemView.findViewById(R.id.buttonDeleteContact);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (mOnItemClickListener != null) {
-                mOnItemClickListener.onClick(view);
-            }
-        }
-
-        public Button getDeleteButton() {
-            return deleteButton;
-        }
-
-
     }
 }

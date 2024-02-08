@@ -46,8 +46,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             currentContact = new Contact();
         }
         setForEditing(false);
-        //initDeleteSwitch();
-
     }
 
     private void initListButton() {
